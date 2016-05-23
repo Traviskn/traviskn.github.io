@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Travis Nuttall </title>
+    <link>http://traviskn.github.io/</link>
+    <language>en-us</language>
+    <author>Travis Nuttall</author>
+    <rights>(C) 2016</rights>
+    <updated>2016-04-27 17:36:22 -0600 MDT</updated>
+
+    
+      
+    
+      
+        <item>
+          <title>Hello World</title>
+          <link>http://traviskn.github.io/post/hello-world/</link>
+          <pubDate>Fri, 22 Apr 22046 16:46:41 MDT</pubDate>
+          <author>Travis Nuttall</author>
+          <guid>http://traviskn.github.io/post/hello-world/</guid>
+          <description>&lt;p&gt;I thought it was about time I started a blog of some kind.  I hope that this blog can become a useful reference for both myself and others!&lt;/p&gt;
+</description>
+        </item>
+      
+    
+
+  </channel>
+</rss>
