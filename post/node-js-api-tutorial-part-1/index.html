@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="generator" content="Hugo 0.16" />
+    <meta name="author" content="Travis Nuttall" />
+    <meta name="description" content="The personal blog of Travis Nuttall"/>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0'>
+
+    <title>Travis Nuttall's Blog</title>
+
+    
+
+    <link rel="stylesheet" href="http://traviskn.github.io/css/styles.css">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" />
+    <link rel="alternate" type="application/rss+xml" title="RSS" href="http://traviskn.github.io//index.xml">
+  </head>
+
+  <body>
+    <header>
+      <div class="clearfix container">
+        <a href="http://traviskn.github.io/" class="site-avatar">
+          <img
+            src="https://avatars2.githubusercontent.com/u/3917158?v=2&s=140"
+            alt="Profile Image" />
+        </a>
+
+        <div class="site-info">
+            <h1 class="site-name">
+              <a href="http://traviskn.github.io/">Travis Nuttall</a>
+            </h1>
+
+          <p class="site-description">Coding, Japanese, and Other Geeky Things</p>
+        </div>
+
+        <nav class="header-nav">
+          <a href="http://traviskn.github.io/">Blog</a>
+          
+            
+          
+            
+              <a href="http://traviskn.github.io/about/">About</a>
+            
+          
+            
+          
+        </nav>
+      </div>
+    </header>
+
+    <main role="main" >
+      <div class="container">
+        <h1>
+          <a href="http://traviskn.github.io/post/node-js-api-tutorial-part-1/">Node.js API Tutorial Part 1</a>
+        </h1>
+
+        <article>
+          
+
+<p><a href="https://nodejs.org">Node.js</a> is a great technology for creating web apps!
+In this first tutorial we are going to lay the foundation for a simple website
+powered by a Node api server. By the end of this series of tutorials, we will
+have a Node website with basic user registration and authentication capabilities.
+I assume that you have a basic understanding of JavaScript and web development.
+You can find the full source code for the project <a href="github.com">here</a>.
+Let&rsquo;s dive in!</p>
+
+<h2 id="installing-our-tools">Installing Our Tools</h2>
+
+<p>First you will need to install <a href="https://nodejs.org">node.js</a>.  You can install
+it directly from the <a href="https://nodejs.org/en/download/">official website</a> on either
+Mac, Linux, or Windows.  I am writing this tutorial on a Mac running Node version
+6.2.0.  While there will be some differences depending on your operating system
+of choice, as long as you are on the same version of Node things should work.</p>
+
+<p>Open up your command line and test out the following commands:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span>$ node -v
+$ npm -v
+</pre></div>
+
+<p>If you see a version number printed out to the screen for both of those commands,
+then you are ready to go!</p>
+
+<p>Note that the leading &lsquo;$&rsquo; indicates a shell prompt, and not a character that you
+need to type in.  The commands to run are on each line following the &lsquo;$&rsquo;, so be
+careful not to copy and paste the &lsquo;$&rsquo; sign.</p>
+
+<h2 id="creating-our-project">Creating Our Project</h2>
+
+<p>Create a folder to hold our project called sample_app, and initialize it as a
+Node project using the NPM tool:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span>$ mkdir sample_app
+$ <span style="color: #008000">cd</span> sample_app
+$ npm init
+</pre></div>
+
+<p>You will be prompted for some information about the project such as author name.
+Go ahead and accept the defaults by just hitting enter if you aren&rsquo;t sure what
+to put.  Afterwards you should see a new package.json file in your project folder.</p>
+
+<p>My favorite library for creating Node.js servers is <a href="http://hapijs.com/">Hapi</a>.
+Hapi is famous for supporting Walmart&rsquo;s e-commerce applications under massive
+load during black Friday.  Install Hapi using the Node Package Manager, or NPM.</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span>$ npm install hapi --save
+</pre></div>
+
+<p>If you look at the package.json file, you will see that npm added Hapi as a
+dependency.  That&rsquo;s what the &lsquo;save&rsquo; option does. This will help you keep track
+of all the libraries needed to run your project!  You will also notice a new
+folder called &lsquo;node_modules&rsquo;.  This folder is where npm downloads libraries for
+you to use.</p>
+
+<h2 id="your-first-node-js-server">Your First Node.js Server</h2>
+
+<p>Let&rsquo;s start writing our first piece of node.js code!  Create a file called index.js
+with the following content:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #BA2121">&#39;use strict&#39;</span>;
+
+<span style="color: #008000; font-weight: bold">const</span> Hapi <span style="color: #666666">=</span> require(<span style="color: #BA2121">&#39;hapi&#39;</span>);
+
+<span style="color: #408080; font-style: italic">// Create a server with a host and port</span>
+<span style="color: #008000; font-weight: bold">const</span> server <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> Hapi.Server();
+server.connection({
+    host<span style="color: #666666">:</span> <span style="color: #BA2121">&#39;localhost&#39;</span>,
+    port<span style="color: #666666">:</span> <span style="color: #666666">8000</span>
+});
+
+<span style="color: #408080; font-style: italic">// Add the home route</span>
+server.route({
+    method<span style="color: #666666">:</span> <span style="color: #BA2121">&#39;GET&#39;</span>,
+    path<span style="color: #666666">:</span><span style="color: #BA2121">&#39;/&#39;</span>,
+    handler<span style="color: #666666">:</span> <span style="color: #008000; font-weight: bold">function</span> (request, reply) {
+        <span style="color: #008000; font-weight: bold">return</span> reply(<span style="color: #BA2121">&#39;Hello, Node.js!&#39;</span>);
+    }
+});
+
+<span style="color: #408080; font-style: italic">// Start the server</span>
+server.start((err) <span style="color: #666666">=&gt;</span> {
+    <span style="color: #008000; font-weight: bold">if</span> (err) {
+        <span style="color: #008000; font-weight: bold">throw</span> err;
+    }
+    console.log(<span style="color: #BA2121">&#39;Server running at:&#39;</span>, server.info.uri);
+});
+</pre></div>
+
+<p>Depending on your level of JavaScript experience, some of the syntax in this file
+might look a little strange to you.  Keywords like &lsquo;const&rsquo; and arrow functions
+written with &lsquo;() =&gt; {}&rsquo; are new additions to the most recent official language
+standard, ES6 (or ES2015).  While ES6 is not fully supported in every browser,
+most of it&rsquo;s features <em>are</em> supported in the newest versions of Node.</p>
+
+<p>Start your server with the following command:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span>node index.js
+</pre></div>
+
+<p>You should see a message printed to the screen that says &lsquo;Server running at:
+localhost:8000&rsquo;.  Visit localhost:8000 in your web browser to see the message
+&lsquo;Hello, Node.js!&rsquo;.  Congratulations, you&rsquo;ve written your first Node.js web app!
+You can stop the server by hitting control + c on your keyboard.</p>
+
+<h2 id="building-a-better-project-structure">Building a Better Project Structure</h2>
+
+<p>A realistic project will have more than just one file.  Let&rsquo;s create some better
+structure for our application.  Add two folders, one called &lsquo;client&rsquo; and one called
+&lsquo;server&rsquo;.  Move the index.js file we made earlier into the &lsquo;server&rsquo; folder.  Create
+an empty file called index.html in the client folder.  Finally, create an empty file
+called index.js in the sample_app folder.  After all is done, your project&rsquo;s file
+structure should look like this:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span>sample_app/
+├── index.js
+├── package.json
+├── client/
+│   └── index.html
+├── node_modules/
+│   └── ...
+└── server/
+    └── index.js
+</pre></div>
+
+<p>open up sample_app/index.js and add the following code:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span>require(<span style="color: #BA2121">&#39;./server&#39;</span>);
+</pre></div>
+
+<p>When you require a folder like this, Node&rsquo;s module system will automatically look
+for a file called index.js within that folder.  All this line does is import and
+execute the contents of our server/index.js file.  This will give us a convenient
+way to start our server!</p>
+
+<p>If you open up your package.json file, you will see a section called &lsquo;scripts&rsquo;.
+This is a convenient place to put commands that you run often.  Add a &lsquo;start&rsquo;
+script like the code below:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span>{
+  <span style="color: #BA2121">&quot;name&quot;</span><span style="color: #666666">:</span> <span style="color: #BA2121">&quot;sample_app&quot;</span>,
+  <span style="color: #BA2121">&quot;version&quot;</span><span style="color: #666666">:</span> <span style="color: #BA2121">&quot;1.0.0&quot;</span>,
+  <span style="color: #BA2121">&quot;description&quot;</span><span style="color: #666666">:</span> <span style="color: #BA2121">&quot;&quot;</span>,
+  <span style="color: #BA2121">&quot;main&quot;</span><span style="color: #666666">:</span> <span style="color: #BA2121">&quot;index.js&quot;</span>,
+  <span style="color: #BA2121">&quot;scripts&quot;</span><span style="color: #666666">:</span> {
+    <span style="color: #BA2121">&quot;start&quot;</span><span style="color: #666666">:</span> <span style="color: #BA2121">&quot;node index.js&quot;</span>,
+    <span style="color: #BA2121">&quot;test&quot;</span><span style="color: #666666">:</span> <span style="color: #BA2121">&quot;echo \&quot;Error: no test specified\&quot; &amp;&amp; exit 1&quot;</span>
+  },
+  <span style="color: #BA2121">&quot;author&quot;</span><span style="color: #666666">:</span> <span style="color: #BA2121">&quot;Travis Nuttall&quot;</span>,
+  <span style="color: #BA2121">&quot;license&quot;</span><span style="color: #666666">:</span> <span style="color: #BA2121">&quot;ISC&quot;</span>
+}
+</pre></div>
+
+<p>Now you can use npm to start your Node server.  Open your command line in the
+&lsquo;sample_app&rsquo; folder and run the following command:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span>$ npm run start
+</pre></div>
+
+<p>Just like before, you should see a message printed to the screen that says
+&lsquo;Server running at: localhost:8000&rsquo;. Visit localhost:8000 in your web browser
+to be sure you still see the message &lsquo;Hello, Node.js!&rsquo;.  Remember that the code
+in server/index.js should match the code we wrote in the previous section, &lsquo;Your
+First Node Server&rsquo;.</p>
+
+<p>Remember that you must be in the same directory as the package.json file in order
+to run npm commands, and that ours is in the project root; the sample_app
+directory.</p>
+
+<h2 id="adding-a-homepage">Adding a Homepage</h2>
+
+<p>Node can serve static HTML files just like any web server.  Hapi uses a plugin
+called Inert to enable this.  Install it with NPM:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span>$ npm install inert --save
+</pre></div>
+
+<p>Now we can update our code in server/index.js to serve the index.html file for
+our home route.</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #BA2121">&#39;use strict&#39;</span>;
+
+<span style="color: #008000; font-weight: bold">const</span> Hapi <span style="color: #666666">=</span> require(<span style="color: #BA2121">&#39;hapi&#39;</span>);
+<span style="color: #008000; font-weight: bold">const</span> Inert <span style="color: #666666">=</span> require(<span style="color: #BA2121">&#39;inert&#39;</span>);
+<span style="color: #008000; font-weight: bold">const</span> path <span style="color: #666666">=</span> require(<span style="color: #BA2121">&#39;path&#39;</span>);
+
+<span style="color: #408080; font-style: italic">// Create a server with a host and port</span>
+<span style="color: #008000; font-weight: bold">const</span> server <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> Hapi.Server({
+   <span style="color: #408080; font-style: italic">// Configure where static files are located</span>
+    connections<span style="color: #666666">:</span> {
+        routes<span style="color: #666666">:</span> {
+            files<span style="color: #666666">:</span> {
+                relativeTo<span style="color: #666666">:</span> path.join(__dirname, <span style="color: #BA2121">&#39;../client&#39;</span>)
+            }
+        }
+    }
+});
+
+server.connection({
+    host<span style="color: #666666">:</span> <span style="color: #BA2121">&#39;localhost&#39;</span>,
+    port<span style="color: #666666">:</span> <span style="color: #666666">8000</span>
+});
+
+<span style="color: #408080; font-style: italic">// Register plugins</span>
+server.register([Inert], (err) <span style="color: #666666">=&gt;</span> {
+    <span style="color: #008000; font-weight: bold">if</span>(err) {
+        <span style="color: #008000; font-weight: bold">throw</span> err;
+    }
+
+    <span style="color: #408080; font-style: italic">// Add the home route</span>
+    server.route({
+        method<span style="color: #666666">:</span> <span style="color: #BA2121">&#39;GET&#39;</span>,
+        path<span style="color: #666666">:</span><span style="color: #BA2121">&#39;/&#39;</span>,
+        handler<span style="color: #666666">:</span> {
+            file<span style="color: #666666">:</span> <span style="color: #BA2121">&#39;./index.html&#39;</span>
+        }
+    });
+
+    <span style="color: #408080; font-style: italic">// Start the server</span>
+    server.start((err) <span style="color: #666666">=&gt;</span> {
+        <span style="color: #008000; font-weight: bold">if</span> (err) {
+            <span style="color: #008000; font-weight: bold">throw</span> err;
+        }
+        console.log(<span style="color: #BA2121">&#39;Server running at:&#39;</span>, server.info.uri);
+    });
+});
+</pre></div>
+
+<p>Let&rsquo;s fill out our homepage now by editing client/index.html.</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #BC7A00">&lt;!DOCTYPE html&gt;</span>
+&lt;<span style="color: #008000; font-weight: bold">html</span> <span style="color: #7D9029">lang</span><span style="color: #666666">=</span><span style="color: #BA2121">&quot;en&quot;</span>&gt;
+  &lt;<span style="color: #008000; font-weight: bold">head</span>&gt;
+    &lt;<span style="color: #008000; font-weight: bold">meta</span> <span style="color: #7D9029">charset</span><span style="color: #666666">=</span><span style="color: #BA2121">&quot;UTF-8&quot;</span>&gt;
+    &lt;<span style="color: #008000; font-weight: bold">title</span>&gt;Sample App&lt;/<span style="color: #008000; font-weight: bold">title</span>&gt;
+  &lt;/<span style="color: #008000; font-weight: bold">head</span>&gt;
+  &lt;<span style="color: #008000; font-weight: bold">body</span>&gt;
+    &lt;<span style="color: #008000; font-weight: bold">h1</span>&gt;Sample App Homepage&lt;/<span style="color: #008000; font-weight: bold">h1</span>&gt;
+  &lt;/<span style="color: #008000; font-weight: bold">body</span>&gt;
+&lt;/<span style="color: #008000; font-weight: bold">html</span>&gt;
+</pre></div>
+
+<p>Start you server again by running &lsquo;npm run start&rsquo; in the &lsquo;sample_app&rsquo; directory.
+If you visit localhost:8000 you should see the heading &lsquo;Sample App Homepage&rsquo;.<br />
+Your server can now handle HTML files!</p>
+
+<p>It is worth noting that Hapi can also do more advanced HTML templating with a package
+called <a href="https://github.com/hapijs/vision">Vision</a>. You could create dynamic HTML
+pages on your server just like other web programming tools such as PHP or Ruby on
+Rails.  In this guide however we are going to focus on creating an API and will
+not cover any server-side templating.</p>
+
+<h2 id="a-demo-api">A Demo API</h2>
+
+<p>API, or Application Programming Interface, can mean many different things depending
+on the context.  In these tutorials our API is a web service that can handle creating,
+reading, updating, and deleting data.  Rather than rendering complete web pages
+with web forms to accomplish this, our API will simply send and receive raw data
+leaving the display and formatting of this data up to the client app.  A &lsquo;client
+app&rsquo; could be HTML and JavaScript running in a browser, or it could even be an
+Android or iPhone application.  This is one of the major reasons that API&rsquo;s have
+become popular recently - they are flexible enough to support both web and mobile
+apps.</p>
+
+<p>Let&rsquo;s create a very simple demo of how our API and web app are going to work.
+This will just be a quick and easy demo which will be extended in future tutorials
+in this series.</p>
+
+<p>Open up server/index.js and update it to match the code below.  The key differences
+are in the server.route method about halfway down the file.</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #BA2121">&#39;use strict&#39;</span>;
+
+<span style="color: #008000; font-weight: bold">const</span> Hapi <span style="color: #666666">=</span> require(<span style="color: #BA2121">&#39;hapi&#39;</span>);
+<span style="color: #008000; font-weight: bold">const</span> Inert <span style="color: #666666">=</span> require(<span style="color: #BA2121">&#39;inert&#39;</span>);
+<span style="color: #008000; font-weight: bold">const</span> path <span style="color: #666666">=</span> require(<span style="color: #BA2121">&#39;path&#39;</span>);
+
+<span style="color: #408080; font-style: italic">// Create a server</span>
+<span style="color: #008000; font-weight: bold">const</span> server <span style="color: #666666">=</span> <span style="color: #008000; font-weight: bold">new</span> Hapi.Server({
+   <span style="color: #408080; font-style: italic">// Configure where static files are located</span>
+    connections<span style="color: #666666">:</span> {
+        routes<span style="color: #666666">:</span> {
+            files<span style="color: #666666">:</span> {
+                relativeTo<span style="color: #666666">:</span> path.join(__dirname, <span style="color: #BA2121">&#39;../client&#39;</span>)
+            }
+        }
+    }
+});
+
+<span style="color: #408080; font-style: italic">// Configure the server host and port</span>
+server.connection({
+    host<span style="color: #666666">:</span> <span style="color: #BA2121">&#39;localhost&#39;</span>,
+    port<span style="color: #666666">:</span> <span style="color: #666666">8000</span>
+});
+
+<span style="color: #408080; font-style: italic">// Register plugins</span>
+server.register([Inert], (err) <span style="color: #666666">=&gt;</span> {
+    <span style="color: #008000; font-weight: bold">if</span>(err) {
+        <span style="color: #008000; font-weight: bold">throw</span> err;
+    }
+
+    <span style="color: #408080; font-style: italic">// Add the home route and api messages route</span>
+    server.route([
+      {
+        method<span style="color: #666666">:</span> <span style="color: #BA2121">&#39;GET&#39;</span>,
+        path<span style="color: #666666">:</span><span style="color: #BA2121">&#39;/&#39;</span>,
+        handler<span style="color: #666666">:</span> {
+            file<span style="color: #666666">:</span> <span style="color: #BA2121">&#39;./index.html&#39;</span>
+        }
+      }, {
+        method<span style="color: #666666">:</span> <span style="color: #BA2121">&#39;GET&#39;</span>,
+        path<span style="color: #666666">:</span> <span style="color: #BA2121">&#39;/api/messages/&#39;</span>,
+        handler<span style="color: #666666">:</span> <span style="color: #008000; font-weight: bold">function</span>(request, reply) {
+          <span style="color: #408080; font-style: italic">// Create some dummy data to send back</span>
+          <span style="color: #008000; font-weight: bold">return</span> reply({
+            data<span style="color: #666666">:</span> [
+              { id<span style="color: #666666">:</span> <span style="color: #666666">1</span>, message<span style="color: #666666">:</span> <span style="color: #BA2121">&quot;Hello there!&quot;</span> },
+              { id<span style="color: #666666">:</span> <span style="color: #666666">2</span>, message<span style="color: #666666">:</span> <span style="color: #BA2121">&quot;What&#39;s up?&quot;</span> },
+              { id<span style="color: #666666">:</span> <span style="color: #666666">3</span>, message<span style="color: #666666">:</span> <span style="color: #BA2121">&quot;How are you?&quot;</span>}
+            ]
+          });
+        }
+      }
+    ]);
+
+    <span style="color: #408080; font-style: italic">// Start the server</span>
+    server.start((err) <span style="color: #666666">=&gt;</span> {
+        <span style="color: #008000; font-weight: bold">if</span> (err) {
+            <span style="color: #008000; font-weight: bold">throw</span> err;
+        }
+        console.log(<span style="color: #BA2121">&#39;Server running at:&#39;</span>, server.info.uri);
+    });
+});
+</pre></div>
+
+<p>Restart your server and open <code>localhost:8000/api/messages/</code> in your browser.  You
+should see some raw data in a format called JSON, or JavaScript Object Notation.
+We&rsquo;ve structured our data under a key called, appropriately enough, data.  The data
+is just a list of 3 messages, complete with an ID and the actual text of the message.
+While this data is obviously not very nice for a human to read, it is perfect for
+a computer program!</p>
+
+<p>Let&rsquo;s open up client/index.html and add a simple client-side application to read
+and format this data a little better for a human user.  Update your file to match
+the code below:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #BC7A00">&lt;!DOCTYPE html&gt;</span>
+
+&lt;<span style="color: #008000; font-weight: bold">html</span> <span style="color: #7D9029">lang</span><span style="color: #666666">=</span><span style="color: #BA2121">&quot;en&quot;</span>&gt;
+  &lt;<span style="color: #008000; font-weight: bold">head</span>&gt;
+    &lt;<span style="color: #008000; font-weight: bold">meta</span> <span style="color: #7D9029">charset</span><span style="color: #666666">=</span><span style="color: #BA2121">&quot;UTF-8&quot;</span>&gt;
+
+    &lt;<span style="color: #008000; font-weight: bold">title</span>&gt;Sample Message App&lt;/<span style="color: #008000; font-weight: bold">title</span>&gt;
+  &lt;/<span style="color: #008000; font-weight: bold">head</span>&gt;
+
+  &lt;<span style="color: #008000; font-weight: bold">body</span>&gt;
+    &lt;<span style="color: #008000; font-weight: bold">h1</span>&gt;Sample Message App&lt;/<span style="color: #008000; font-weight: bold">h1</span>&gt;
+
+    &lt;<span style="color: #008000; font-weight: bold">button</span> <span style="color: #7D9029">id</span><span style="color: #666666">=</span><span style="color: #BA2121">&quot;getMessagesButton&quot;</span>&gt;Get Messages&lt;/<span style="color: #008000; font-weight: bold">button</span>&gt;
+    &lt;<span style="color: #008000; font-weight: bold">button</span> <span style="color: #7D9029">id</span><span style="color: #666666">=</span><span style="color: #BA2121">&quot;clearMessagesButton&quot;</span>&gt;Clear Messages&lt;/<span style="color: #008000; font-weight: bold">button</span>&gt;
+
+    &lt;<span style="color: #008000; font-weight: bold">ul</span> <span style="color: #7D9029">id</span><span style="color: #666666">=</span><span style="color: #BA2121">&quot;messageList&quot;</span>&gt;&lt;/<span style="color: #008000; font-weight: bold">ul</span>&gt;
+
+    &lt;<span style="color: #008000; font-weight: bold">script</span> <span style="color: #7D9029">src</span><span style="color: #666666">=</span><span style="color: #BA2121">&quot;https://code.jquery.com/jquery-3.0.0.min.js&quot;</span>&gt;&lt;/<span style="color: #008000; font-weight: bold">script</span>&gt;
+    &lt;<span style="color: #008000; font-weight: bold">script</span> <span style="color: #7D9029">type</span><span style="color: #666666">=</span><span style="color: #BA2121">&quot;text/javascript&quot;</span>&gt;
+        <span style="color: #BA2121">&#39;use strict&#39;</span>
+
+        <span style="color: #408080; font-style: italic">// Wait until the page is ready for our code to run</span>
+        jQuery(<span style="color: #008000">document</span>).ready(<span style="color: #008000; font-weight: bold">function</span>() {
+            <span style="color: #408080; font-style: italic">// Get messages when the button is clicked</span>
+            <span style="color: #008000; font-weight: bold">var</span> getMessagesButton <span style="color: #666666">=</span> $(<span style="color: #BA2121">&#39;#getMessagesButton&#39;</span>);
+            getMessagesButton.click(<span style="color: #008000; font-weight: bold">function</span>() {
+                getMessages();
+            });
+
+            <span style="color: #408080; font-style: italic">// Clear messages when the button is clicked</span>
+            <span style="color: #008000; font-weight: bold">var</span> clearMessagesButton <span style="color: #666666">=</span> $(<span style="color: #BA2121">&#39;#clearMessagesButton&#39;</span>);
+            clearMessagesButton.click(<span style="color: #008000; font-weight: bold">function</span>() {
+                clearMessages();
+            });
+
+            <span style="color: #408080; font-style: italic">// Hide the clear messages button at first</span>
+            clearMessagesButton.hide();
+
+            <span style="color: #408080; font-style: italic">// Get the list that will hold messages</span>
+            <span style="color: #008000; font-weight: bold">var</span> messageList <span style="color: #666666">=</span> $(<span style="color: #BA2121">&#39;#messageList&#39;</span>);
+
+            <span style="color: #408080; font-style: italic">// Get the message data from our API</span>
+            <span style="color: #008000; font-weight: bold">function</span> getMessages() {
+                $.get(<span style="color: #BA2121">&#39;/api/messages/&#39;</span>, <span style="color: #008000; font-weight: bold">function</span>(response) {
+                    renderMessages(response.data);
+                });
+            }
+
+            <span style="color: #408080; font-style: italic">// Display the message data in a nice list format</span>
+            <span style="color: #008000; font-weight: bold">function</span> renderMessages(data) {
+                <span style="color: #008000; font-weight: bold">var</span> messages <span style="color: #666666">=</span> data.map(<span style="color: #008000; font-weight: bold">function</span>(m) {
+                    <span style="color: #008000; font-weight: bold">return</span> $(<span style="color: #BA2121">&#39;&lt;li id=&quot;&#39;</span> <span style="color: #666666">+</span> m.id <span style="color: #666666">+</span> <span style="color: #BA2121">&#39;&quot;&gt;&#39;</span> <span style="color: #666666">+</span> m.message <span style="color: #666666">+</span> <span style="color: #BA2121">&#39;&lt;/li&gt;&#39;</span>);
+                });
+
+                messageList.html(messages);
+
+                getMessagesButton.hide();
+                clearMessagesButton.show();
+            }
+
+            <span style="color: #408080; font-style: italic">// Remove all the messages from the list</span>
+            <span style="color: #008000; font-weight: bold">function</span> clearMessages() {
+                messageList.empty();
+
+                clearMessagesButton.hide();
+                getMessagesButton.show();
+            }
+        });
+    &lt;/<span style="color: #008000; font-weight: bold">script</span>&gt;
+  &lt;/<span style="color: #008000; font-weight: bold">body</span>&gt;
+&lt;/<span style="color: #008000; font-weight: bold">html</span>&gt;
+</pre></div>
+
+<p>There&rsquo;s quite a bit of code here, so let&rsquo;s go through it step by step.  First in
+the HTML we added two buttons, one to get the message data from our API, and another
+to clear the messages out once we are done with them.  Next we added an empty list
+to hold the messages we get from the API.</p>
+
+<p>Near the bottom of the HTML page we added some &lsquo;script&rsquo; tags to hold our simple
+JavaScript application.  I decided to link jQuery into our page to help make our
+code a bit easier to write.  jQuery is one of the most popular libraries in use
+on the web today, so hopefully you have seen it before.</p>
+
+<p>I put all our code in a document ready callback which will wait until the page is
+loaded before running our code.  I grab our two buttons by their ID&rsquo;s and set up
+click handlers to get and clear messages respectively.  I also grab our message
+list by it&rsquo;s ID so that we can add our messages to it once we get them. Finally
+I define 3 functions; one to get message data from the API, another to format the
+message data into an HTML list and add it to the page, and finally one to clear
+out the messages once we are done with them.</p>
+
+<p>Restart your server and go to localhost:8000 in your browser to see the simple messages
+app.  You can press &lsquo;Get Messages&rsquo; to populate the list with messages from the API,
+and then you can press &lsquo;Clear Messages&rsquo; to get rid of them.  Right click the page
+and select &lsquo;Inspect Element&rsquo; to see how the HTML of the page is changing.  Click
+the &lsquo;Network&rsquo; tab of the inspector to see the API request and response made when
+you click &lsquo;Get Messages&rsquo;.  Notice how the page does not need to refresh in order
+to get the messages!  This is how many popular email applications work, which are
+able to create, read, and delete emails without ever refreshing the page.  All the
+data is being managed by JavaScript running in your browser.  The application feels
+much faster and more responsive when you can avoid refreshing the page.</p>
+
+<p>You can perhaps imagine how you might extend this small application.  Right now
+all we have are three hardcoded messages, but if we add a database we could easily
+manage many more messages.  We could add buttons to create new messages and send
+them to our API server to be saved to a database.  Since each message is rendered
+as a list item with an ID, it would be possible to add a &lsquo;Delete&rsquo; button to each
+message and send a delete request to your API server to tell it to delete the message
+from a database. You could potentially add all sorts of messaging functionality
+if you wanted! Unfortunately this is where our demo app ends.  We will add more
+functionality to it in upcoming tutorials.</p>
+
+<h2 id="next-steps">Next Steps</h2>
+
+<p>We have created a very basic Node app with just a homepage.  Next we need to give
+our app the ability to work with a database.  Stay tuned for part 2 where we will
+cover using a relational SQL database to store and retrieve data!</p>
+
+        </article>
+
+        
+          <section class="date">
+  Written on Jun 11, 2016
+</section>
+
+        
+
+        
+          <section class="tags">
+            <span class="tags-label">Tags:</span>
+            
+              <a href="http://traviskn.github.io/tags/javascript" class="tag">
+                javascript
+              </a>
+            
+              <a href="http://traviskn.github.io/tags/node" class="tag">
+                node
+              </a>
+            
+              <a href="http://traviskn.github.io/tags/tutorial" class="tag">
+                tutorial
+              </a>
+            
+          </section>
+        
+      </div>
+    </main>
+<footer>
+  <ul class="list-inline">
+    <li>
+      <a href="https://twitter.com/tuttall" class="btn-social btn-outline">
+        <i class="fa fa-fw fa-twitter"></i>
+      </a>
+    </li>
+
+    <li>
+      <a href="https://www.linkedin.com/in/travisnuttall" class="btn-social btn-outline">
+        <i class="fa fa-fw fa-linkedin"></i>
+      </a>
+    </li>
+
+    <li>
+      <a href="http://github.com/traviskn" class="btn-social btn-outline">
+        <i class="fa fa-fw fa-github"></i>
+      </a>
+    </li>
+  </ul>
+</footer>
+</body>
+</html>
+
