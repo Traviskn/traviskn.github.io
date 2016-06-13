@@ -150,6 +150,10 @@ img {
   max-width: 100%;
 }
 
+pre {
+  white-space: pre-wrap;
+}
+
 .date {
   font-style: italic;
   color: #666;
