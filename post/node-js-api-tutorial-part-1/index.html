@@ -1,11 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+  <head prefix="og: http://ogp.me/ns#">
     <meta charset="UTF-8">
-    <meta name="generator" content="Hugo 0.16" />
+    <meta name="generator" content="Hugo 0.21" />
     <meta name="author" content="Travis Nuttall" />
-    <meta name="description" content="The personal blog of Travis Nuttall"/>
-    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0'>
+    <meta name="description" content="The personal blog of Travis Nuttall" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <meta property="og:site_name" content="Travis Nuttall's Blog" />
+    <meta property="og:title" content="Node.js API Tutorial Part 1" />
+    
+      <meta property="og:type" content="article" />
+      <meta property="og:article:published_at" content="2016-06-11 00:00:00 &#43;0000 UTC" />
+      
+        
+          <meta property="og:article:tag" content="javascript" />
+        
+          <meta property="og:article:tag" content="node" />
+        
+          <meta property="og:article:tag" content="tutorial" />
+        
+      
+    
 
     <title>Travis Nuttall's Blog</title>
 
@@ -17,7 +32,7 @@
   </head>
 
   <body>
-    <header>
+    <header class="global-header">
       <div class="clearfix container">
         <a href="http://traviskn.github.io/" class="site-avatar">
           <img
@@ -30,7 +45,7 @@
               <a href="http://traviskn.github.io/">Travis Nuttall</a>
             </h1>
 
-          <p class="site-description">Coding, Japanese, and Other Geeky Things</p>
+          <p class="site-description">Husband, Coder, Japan Enthusiast, Aspiring Entrepreneur</p>
         </div>
 
         <nav class="header-nav">
@@ -48,11 +63,65 @@
       </div>
     </header>
 
-    <main role="main" >
+    <main role="main">
       <div class="container">
-        <h1>
-          <a href="http://traviskn.github.io/post/node-js-api-tutorial-part-1/">Node.js API Tutorial Part 1</a>
-        </h1>
+        <header>
+          <h1>
+            Node.js API Tutorial Part 1
+          </h1>
+
+          
+            <div class="clearfix">
+              <div class="header-date">
+                <p class="date">
+  Written on
+  <time datetime="2016-06-11 00:00:00 &#43;0000 UTC">
+    Jun 11, 2016
+  </time>
+</p>
+
+              </div>
+
+              <div class="header-tags">
+                
+  <aside class="tags">
+    <span class="tags-label">Tags:</span>
+    
+      <a href="http://traviskn.github.io/tags/javascript" class="tag">
+        javascript
+      </a>
+    
+      <a href="http://traviskn.github.io/tags/node" class="tag">
+        node
+      </a>
+    
+      <a href="http://traviskn.github.io/tags/tutorial" class="tag">
+        tutorial
+      </a>
+    
+  </aside>
+
+
+
+              </div>
+            </div>
+
+            
+              <aside>
+                
+                
+                <p>This is a post in the
+                  <a href="http://traviskn.github.io//series/node-api-tutorial" id="series">
+                    <b>Node API Tutorial</b>
+                  </a>
+                  series.
+                </p>
+              </aside>
+            
+          </header>
+
+          <hr/>
+        
 
         <article>
           
@@ -135,7 +204,7 @@ server.route({
 });
 
 <span style="color: #408080; font-style: italic">// Start the server</span>
-server.start((err) <span style="color: #666666">=&gt;</span> {
+server.start((err) =&gt; {
     <span style="color: #008000; font-weight: bold">if</span> (err) {
         <span style="color: #008000; font-weight: bold">throw</span> err;
     }
@@ -251,7 +320,7 @@ server.connection({
 });
 
 <span style="color: #408080; font-style: italic">// Register plugins</span>
-server.register([Inert], (err) <span style="color: #666666">=&gt;</span> {
+server.register([Inert], (err) =&gt; {
     <span style="color: #008000; font-weight: bold">if</span>(err) {
         <span style="color: #008000; font-weight: bold">throw</span> err;
     }
@@ -266,7 +335,7 @@ server.register([Inert], (err) <span style="color: #666666">=&gt;</span> {
     });
 
     <span style="color: #408080; font-style: italic">// Start the server</span>
-    server.start((err) <span style="color: #666666">=&gt;</span> {
+    server.start((err) =&gt; {
         <span style="color: #008000; font-weight: bold">if</span> (err) {
             <span style="color: #008000; font-weight: bold">throw</span> err;
         }
@@ -341,7 +410,7 @@ server.connection({
 });
 
 <span style="color: #408080; font-style: italic">// Register plugins</span>
-server.register([Inert], (err) <span style="color: #666666">=&gt;</span> {
+server.register([Inert], (err) =&gt; {
     <span style="color: #008000; font-weight: bold">if</span>(err) {
         <span style="color: #008000; font-weight: bold">throw</span> err;
     }
@@ -371,7 +440,7 @@ server.register([Inert], (err) <span style="color: #666666">=&gt;</span> {
     ]);
 
     <span style="color: #408080; font-style: italic">// Start the server</span>
-    server.start((err) <span style="color: #666666">=&gt;</span> {
+    server.start((err) =&gt; {
         <span style="color: #008000; font-weight: bold">if</span> (err) {
             <span style="color: #008000; font-weight: bold">throw</span> err;
         }
@@ -511,36 +580,57 @@ cover using a relational SQL database to store and retrieve data!</p>
         </article>
 
         
-          <section class="date">
-  Written on Jun 11, 2016
-</section>
+          
+
+<hr/>
+<aside>
+  <p>
+    This is a post in the
+    <a href="http://traviskn.github.io//series/node-api-tutorial" id="series">
+      <b>Node API Tutorial</b>
+    </a>
+    series. Other posts in this series:
+  </p>
+
+  
+  <ul class="series">
+  
+    <li>
+      <a href="http://traviskn.github.io/post/node-js-api-tutorial-part-1/">Node.js API Tutorial Part 1</a>
+    </li>
+  
+  </ul>
+</aside>
+
 
         
 
         
-          <section class="tags">
-            <span class="tags-label">Tags:</span>
-            
-              <a href="http://traviskn.github.io/tags/javascript" class="tag">
-                javascript
-              </a>
-            
-              <a href="http://traviskn.github.io/tags/node" class="tag">
-                node
-              </a>
-            
-              <a href="http://traviskn.github.io/tags/tutorial" class="tag">
-                tutorial
-              </a>
-            
-          </section>
-        
+  <aside class="tags">
+    <span class="tags-label">Tags:</span>
+    
+      <a href="http://traviskn.github.io/tags/javascript" class="tag">
+        javascript
+      </a>
+    
+      <a href="http://traviskn.github.io/tags/node" class="tag">
+        node
+      </a>
+    
+      <a href="http://traviskn.github.io/tags/tutorial" class="tag">
+        tutorial
+      </a>
+    
+  </aside>
+
+
+
       </div>
     </main>
 <footer>
   <ul class="list-inline">
     <li>
-      <a href="https://twitter.com/tuttall" class="btn-social btn-outline">
+      <a href="https://twitter.com/travisnuttall" class="btn-social btn-outline">
         <i class="fa fa-fw fa-twitter"></i>
       </a>
     </li>
@@ -552,7 +642,7 @@ cover using a relational SQL database to store and retrieve data!</p>
     </li>
 
     <li>
-      <a href="http://github.com/traviskn" class="btn-social btn-outline">
+      <a href="https://github.com/traviskn" class="btn-social btn-outline">
         <i class="fa fa-fw fa-github"></i>
       </a>
     </li>

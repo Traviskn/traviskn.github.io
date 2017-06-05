@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="generator" content="Hugo 0.21" />
+    <meta name="author" content="Travis Nuttall" />
+    <meta name="description" content="The personal blog of Travis Nuttall"/>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0'>
+
+    <title>Travis Nuttall's Blog</title>
+
+    
+
+    <link rel="stylesheet" href="http://traviskn.github.io/css/styles.css">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" />
+    <link rel="alternate" type="application/rss+xml" title="RSS" href="http://traviskn.github.io//index.xml">
+  </head>
+
+  <body>
+    <header>
+      <div class="clearfix container">
+        <a href="http://traviskn.github.io/" class="site-avatar">
+          <img
+            src="https://avatars2.githubusercontent.com/u/3917158?v=2&s=140"
+            alt="Profile Image" />
+        </a>
+
+        <div class="site-info">
+            <h1 class="site-name">
+              <a href="http://traviskn.github.io/">Travis Nuttall</a>
+            </h1>
+
+          <p class="site-description">Coding, Japanese, and Other Geeky Things</p>
+        </div>
+
+        <nav class="header-nav">
+          <a href="http://traviskn.github.io/">Blog</a>
+          
+            
+          
+            
+          
+            
+              <a href="http://traviskn.github.io/about/">About</a>
+            
+          
+            
+          
+            
+              <a href="http://traviskn.github.io/tags/javascript/">Javascript</a>
+            
+          
+            
+              <a href="http://traviskn.github.io/tags/node/">Node</a>
+            
+          
+            
+              <a href="http://traviskn.github.io/series/node-api/">Node Api</a>
+            
+          
+            
+              <a href="http://traviskn.github.io/tags/personal/">Personal</a>
+            
+          
+            
+          
+            
+              <a href="http://traviskn.github.io/series/">Series</a>
+            
+          
+            
+              <a href="http://traviskn.github.io/tags/">Tags</a>
+            
+          
+            
+              <a href="http://traviskn.github.io/">Travis Nuttall</a>
+            
+          
+            
+              <a href="http://traviskn.github.io/tags/tutorial/">Tutorial</a>
+            
+          
+        </nav>
+      </div>
+    </header>
+
+    <main role="main" >
+      <div class="container">
+        <h1>
+          <a href="http://traviskn.github.io/post/node-js-api-tutorial-part-2/">Node.js Api Tutorial Part 2</a>
+        </h1>
+
+        <article>
+          
+
+<p>Our demo API doesn&rsquo;t yet have the capability to store and retrieve data.  In order
+to do that, we will need a database.  We will also need to define the kind of data
+that our API will work with.  Our goal in this part of the tutorial is to create
+our app&rsquo;s &lsquo;model layer&rsquo;, or &lsquo;data layer&rsquo;.  Let&rsquo;s get started!</p>
+
+<h2 id="installing-our-database">Installing Our Database</h2>
+
+<p>There are many popular database options to choose from in the world of web
+development, but I have decided to go with a relational SQL database.  Relational
+databases are known for reliability and maintaining the integrity of your data.
+Designing your data in a relational way can sometimes feel restrictive, but there
+are many benefits that come from following a SQL database&rsquo;s design rules.</p>
+
+<p>There are still many options even just among SQL databases.  In this tutorial we
+will be using <a href="https://www.postgresql.org/">PostgreSQL</a>, which calls itself
+&lsquo;the world&rsquo;s most advanced open source database&rsquo;.  I have enjoyed using PostgreSQL
+in the past, and have found that is actually does live up to it&rsquo;s big promises!
+You can install it from the <a href="https://www.postgresql.org/download/">official website</a>.
+If you are on a Mac, I actually recommend using the <a href="http://postgresapp.com/">Postgres App</a>
+as it is much easier to manage.</p>
+
+<p>Once you have PostgreSQL installed, in order to use its command line tools you
+will need to be sure that it is added to your path.  On Mac, assuming you installed
+ the <a href="http://postgresapp.com/">Postgres App</a>, add the following line to your ~/.bash_profile:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000">export</span> <span style="color: #19177C">PATH</span><span style="color: #666666">=</span><span style="color: #19177C">$PATH</span>:/Applications/Postgres.app/Contents/Versions/latest/bin
+</pre></div>
+
+<p>Remember to close your terminal and reopen it for the new path to take effect.</p>
+
+<p>On Windows you will need to go through the following menus:</p>
+
+<pre><code>-&gt; Control Panel
+  -&gt; All Control Panel Items
+    -&gt; System
+      -&gt; Advanced System Settings
+        -&gt; Environment Variables
+</code></pre>
+
+<p>Then from the System Variables box select &ldquo;PATH&rdquo; and edit it.  Be careful not to
+delete any of the existing path!  Add the following to the end of it:</p>
+
+<pre><code>;C:\Program Files\PostgreSQL\9.5\bin
+</code></pre>
+
+<p>This is assuming you have version 9.5. Change the version number accordingly if
+you installed a different version.  You may need to restart your computer for the
+new path to take effect.</p>
+
+<p>You will know that you have PostgreSQL installed correctly if you can run the
+following from your command line:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span>$ psql
+</pre></div>
+
+<p>You should see a new line with your username and a # symbol at the end.  Exit the
+prompt by typing &lsquo;\q&rsquo;.</p>
+
+<p>If you see an error that the command is not found, then you need to be sure that
+PostgreSQL is added to your path.</p>
+
+<p>If you see an error that says you could not connect to the server, you need to be
+sure that PostgreSQL is started and running.</p>
+
+<p>There are many things that could potentially go wrong during the installation of
+our database, and it would be impossible for me to predict and troubleshoot every
+situation. Luckily, PostgreSQL is a popular database with a helpful community.
+If you run into problems, Google is your friend!  You should be able to find helpful
+installation instructions online.</p>
+
+<h2 id="connecting-our-api-to-the-database">Connecting Our API to the Database</h2>
+
+<p>We will be using a library called <a href="http://bookshelfjs.org/">Bookshelf</a> to work
+with our database.  Bookshelf is a type of library called an Object Relational
+Mapper, or ORM.  It will help match our JavaScript objects up to tables of data
+in our SQL database. Open up your command line in the sample_app directory and
+install Bookshelf with NPM:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span>$ npm install --save bookshelf
+</pre></div>
+
+<p>Inside the server folder, create a new folder called &lsquo;db&rsquo;.  This folder will store
+our database configuration code.</p>
+
+        </article>
+
+        
+          <section class="date">
+  Written on Jun 18, 2016
+</section>
+
+        
+
+        
+          
+          <hr/>
+          <p>
+            This is a post in the
+            <a href="http://traviskn.github.io//series/node-api" id="series">
+              <b>node-api</b>
+            </a>
+            series.
+            <br/>
+            Other posts in this series:
+          </p>
+
+          
+          
+          <ul class="series">
+          
+            <li>Jun 18, 2016 -
+              <a href="http://traviskn.github.io/post/node-js-api-tutorial-part-2/">Node.js Api Tutorial Part 2</a>
+            </li>
+          
+            <li>Jun 11, 2016 -
+              <a href="http://traviskn.github.io/post/node-js-api-tutorial-part-1/">Node.js API Tutorial Part 1</a>
+            </li>
+          
+          </ul>
+        
+
+        
+          <section class="tags">
+            <span class="tags-label">Tags:</span>
+            
+              <a href="http://traviskn.github.io/tags/javascript" class="tag">
+                javascript
+              </a>
+            
+              <a href="http://traviskn.github.io/tags/node" class="tag">
+                node
+              </a>
+            
+              <a href="http://traviskn.github.io/tags/tutorial" class="tag">
+                tutorial
+              </a>
+            
+          </section>
+        
+      </div>
+    </main>
+<footer>
+  <ul class="list-inline">
+    <li>
+      <a href="https://twitter.com/tuttall" class="btn-social btn-outline">
+        <i class="fa fa-fw fa-twitter"></i>
+      </a>
+    </li>
+
+    <li>
+      <a href="https://www.linkedin.com/in/travisnuttall" class="btn-social btn-outline">
+        <i class="fa fa-fw fa-linkedin"></i>
+      </a>
+    </li>
+
+    <li>
+      <a href="http://github.com/traviskn" class="btn-social btn-outline">
+        <i class="fa fa-fw fa-github"></i>
+      </a>
+    </li>
+  </ul>
+</footer>
+</body>
+</html>
+
